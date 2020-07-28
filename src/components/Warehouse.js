@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Button, Icon, Label } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
+import { genGrid, getId, isEqual } from "../utils/GenGrid";
 
 function Warehouse(props) {
-  const row = props.rows,
+  const rows = props.rows,
     columns = props.cols,
     groups = props.groups;
   const [start, setStart] = useState([-1, -1, -1]);
@@ -11,63 +12,6 @@ function Warehouse(props) {
   const [dir, setDir] = useState(1);
   const [icons, setIcons] = useState({});
 
-  const genGrid = () => {
-    let rows = [];
-    rows.push(<Grid.Column key={0}></Grid.Column>);
-    for (let j = 1; j <= columns; j++)
-      rows.push(
-        <Grid.Column key={"labelcol" + j}>
-          <Label.Group key={"label" + j}>{genLabels(j, groups[j - 1])}</Label.Group>
-        </Grid.Column>
-      );
-    for (let i = 1; i <= row; i++) rows.push(<Grid.Row key={"row" + i}>{genCols(i)}</Grid.Row>);
-    return rows;
-  };
-
-  const genLabels = (col, size) => {
-    let labels = [];
-    for (let k = 1; k <= size; k++)
-      labels.push(<Label key={k}>{String.fromCharCode("A".charCodeAt(0) + col - 1) + k}</Label>);
-    return labels;
-  };
-
-  const genCols = (row) => {
-    let cols = [];
-    cols.push(
-      <Grid.Column key={"labelrow" + row}>
-        <Label>{row}</Label>
-      </Grid.Column>
-    );
-    for (let j = 1; j <= columns; j++)
-      cols.push(
-        <Grid.Column key={"col" + j}>
-          <Button.Group>{genGroups(row, j, groups[j - 1])}</Button.Group>
-        </Grid.Column>
-      );
-    return cols;
-  };
-
-  const getId = (row, col, k) => {
-    return "R" + row + "C" + String.fromCharCode("A".charCodeAt(0) + col - 1) + k;
-  };
-
-  const genGroups = (row, col, size) => {
-    let group = [];
-    for (let k = 1; k <= size; k++) {
-      let id = getId(row, col, k);
-      group.push(
-        <Button id={id} color="grey" onClick={(e) => handleClick(e, row, col, k)} key={k}>
-          <Icon name={icons[id] || "boxes"} />
-        </Button>
-      );
-    }
-    return group;
-  };
-
-  const isEqual = (c1, c2) => {
-    return c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2];
-  };
-
   const handleClick = (event, row, col, k) => {
     event.preventDefault();
     let id = getId(row, col, k);
@@ -75,14 +19,12 @@ function Warehouse(props) {
 
     if (isEqual(start, [-1, -1, -1])) {
       setStart([row, col, k]);
-      setIcons((prevIcons) => ({ ...prevIcons, [id]: "star" }));
     } else if (isEqual(end, [-1, -1, -1])) {
       setEnd([row, col, k]);
-      setIcons((prevIcons) => ({ ...prevIcons, [id]: "stop circle" }));
     } else {
       setStart([row, col, k]);
       setEnd([-1, -1, -1]);
-      setIcons({ [id]: "star" });
+      setIcons({});
     }
   };
 
@@ -138,9 +80,13 @@ function Warehouse(props) {
   useEffect(() => {
     if (!isEqual(start, [-1, -1, -1]) && !isEqual(end, [-1, -1, -1]))
       setPath(genPath(start, end, dir));
+    if (!isEqual(start, [-1, -1, -1]))
+      setIcons((prevIcons) => ({ ...prevIcons, [getId(...start)]: "star" }));
+    if (!isEqual(end, [-1, -1, -1]))
+      setIcons((prevIcons) => ({ ...prevIcons, [getId(...end)]: "stop circle" }));
   }, [start, end]);
 
-  let grid = genGrid(props.rows, props.cols, props.groups);
+  let grid = genGrid(rows, columns, groups, icons, handleClick);
 
   return (
     <Grid textAlign="center" columns="equal">
