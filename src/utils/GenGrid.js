@@ -3,7 +3,11 @@ import { Grid, Button, Icon, Label } from "semantic-ui-react";
 
 function genGrid(totalrows, columns, groups, icons, cb) {
   let rows = [];
-  rows.push(<Grid.Column key={0}></Grid.Column>);
+  rows.push(
+    <Grid.Column style={{ flex: "0 0 10px" }} key={"labelcol" + 0}>
+      <Label>0</Label>
+    </Grid.Column>
+  );
   for (let j = 1; j <= columns; j++)
     rows.push(
       <Grid.Column key={"labelcol" + j}>
@@ -18,15 +22,19 @@ function genGrid(totalrows, columns, groups, icons, cb) {
 function genLabels(col, size) {
   let labels = [];
   for (let k = 1; k <= size; k++)
-    labels.push(<Label key={k}>{String.fromCharCode("A".charCodeAt(0) + col - 1) + k}</Label>);
+    labels.push(
+      <Label color="purple" key={k}>
+        {String.fromCharCode("A".charCodeAt(0) + col - 1) + k}
+      </Label>
+    );
   return labels;
 }
 
 function genCols(row, columns, groups, icons, cb) {
   let cols = [];
   cols.push(
-    <Grid.Column key={"labelrow" + row}>
-      <Label>{row}</Label>
+    <Grid.Column style={{ flex: "0 0 10px" }} key={"labelrow" + row}>
+      <Label color="purple">{row}</Label>
     </Grid.Column>
   );
   for (let j = 1; j <= columns; j++)
@@ -47,12 +55,19 @@ function genGroups(row, col, size, icons, cb) {
   for (let k = 1; k <= size; k++) {
     let id = getId(row, col, k);
     group.push(
-      <Button id={id} color="grey" onClick={(e) => cb(e, row, col, k)} key={k}>
+      <Button id={id} color={getColor(id, icons)} onClick={(e) => cb(e, row, col, k)} key={k}>
         <Icon name={icons[id] || "boxes"} />
       </Button>
     );
   }
   return group;
+}
+
+function getColor(id, icons) {
+  if (icons[id] === undefined) return "grey";
+  else if (icons[id] === "star") return "green";
+  else if (icons[id] === "stop circle") return "red";
+  else return "blue";
 }
 
 function isEqual(c1, c2) {

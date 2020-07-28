@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Warehouse from "./components/Warehouse";
-import { Form } from "semantic-ui-react";
+import { Form, Segment } from "semantic-ui-react";
 
 function App() {
   const [dims, setDims] = useState({
@@ -26,31 +26,36 @@ function App() {
 
   return (
     <div>
-      <Form>
-        <Form.Group widths="equal">
-          <Form.Input fluid name="rows" label="Rows" placeholder="0" onChange={handleChange} />
-          <Form.Input
-            fluid
-            name="cols"
-            label="Main Columns"
-            placeholder="0"
-            onChange={handleChange}
-          />
-          <Form.Input
-            fluid
-            name="groups"
-            label="Groups (No. of subcolumns in each main column)"
-            placeholder="1,1,1,..."
-            onChange={handleChange}
-          />
-        </Form.Group>
-        <Form.Button onClick={handleSubmit}>Submit</Form.Button>
-      </Form>
-      <Warehouse
+      <Segment inverted>
+        <Form inverted>
+          <Form.Group widths="equal">
+            <Form.Input fluid name="rows" label="Rows" placeholder="0" onChange={handleChange} />
+            <Form.Input
+              fluid
+              name="cols"
+              label="Main Columns"
+              placeholder="0"
+              onChange={handleChange}
+            />
+            <Form.Input
+              fluid
+              name="groups"
+              label="Groups (No. of subcolumns in each main column)"
+              placeholder="1,1,1,..."
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Button onClick={handleSubmit}>Submit</Form.Button>
+        </Form>
+      </Segment>
+      <Segment inverted>
+        {/* <Warehouse
         rows={submittedDims.rows}
         cols={submittedDims.cols}
         groups={submittedDims.groups}
-      />
+      /> */}
+        <Warehouse rows={8} cols={4} groups={[1, 2, 1, 2]} />
+      </Segment>
     </div>
   );
 }
