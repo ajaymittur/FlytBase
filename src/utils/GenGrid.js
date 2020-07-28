@@ -1,11 +1,13 @@
 import React from "react";
 import { Grid, Button, Icon, Label } from "semantic-ui-react";
 
-function genGrid(totalrows, columns, groups, icons, cb) {
+function genGrid(totalrows, columns, groups, icons, handleClick, toggleDirection) {
   let rows = [];
   rows.push(
     <Grid.Column style={{ flex: "0 0 10px" }} key={"labelcol" + 0}>
-      <Label>0</Label>
+      <Button color="yellow" style={{ padding: "5px" }} inverted onClick={toggleDirection}>
+        Dir
+      </Button>
     </Grid.Column>
   );
   for (let j = 1; j <= columns; j++)
@@ -15,7 +17,9 @@ function genGrid(totalrows, columns, groups, icons, cb) {
       </Grid.Column>
     );
   for (let i = 1; i <= totalrows; i++)
-    rows.push(<Grid.Row key={"row" + i}>{genCols(i, columns, groups, icons, cb)}</Grid.Row>);
+    rows.push(
+      <Grid.Row key={"row" + i}>{genCols(i, columns, groups, icons, handleClick)}</Grid.Row>
+    );
   return rows;
 }
 
@@ -30,7 +34,7 @@ function genLabels(col, size) {
   return labels;
 }
 
-function genCols(row, columns, groups, icons, cb) {
+function genCols(row, columns, groups, icons, handleClick) {
   let cols = [];
   cols.push(
     <Grid.Column style={{ flex: "0 0 10px" }} key={"labelrow" + row}>
@@ -40,7 +44,7 @@ function genCols(row, columns, groups, icons, cb) {
   for (let j = 1; j <= columns; j++)
     cols.push(
       <Grid.Column key={"col" + j}>
-        <Button.Group>{genGroups(row, j, groups[j - 1], icons, cb)}</Button.Group>
+        <Button.Group>{genGroups(row, j, groups[j - 1], icons, handleClick)}</Button.Group>
       </Grid.Column>
     );
   return cols;
@@ -50,12 +54,16 @@ function getId(row, col, k) {
   return "R" + row + "C" + String.fromCharCode("A".charCodeAt(0) + col - 1) + k;
 }
 
-function genGroups(row, col, size, icons, cb) {
+function genGroups(row, col, size, icons, handleClick) {
   let group = [];
   for (let k = 1; k <= size; k++) {
     let id = getId(row, col, k);
     group.push(
-      <Button id={id} color={getColor(id, icons)} onClick={(e) => cb(e, row, col, k)} key={k}>
+      <Button
+        id={id}
+        color={getColor(id, icons)}
+        onClick={(e) => handleClick(e, row, col, k)}
+        key={k}>
         <Icon name={icons[id] || "boxes"} />
       </Button>
     );

@@ -9,7 +9,7 @@ function Warehouse(props) {
   const [start, setStart] = useState([-1, -1, -1]);
   const [end, setEnd] = useState([-1, -1, -1]);
   const [path, setPath] = useState([]);
-  const [dir, setDir] = useState(1);
+  const [direction, setDirection] = useState(1);
   const [icons, setIcons] = useState({});
 
   const handleClick = (event, row, col, k) => {
@@ -26,6 +26,11 @@ function Warehouse(props) {
       setEnd([-1, -1, -1]);
       setIcons({});
     }
+  };
+
+  const toggleDirection = (event) => {
+    setDirection((prevDir) => -prevDir);
+    setIcons({});
   };
 
   const genPath = (start, end, dir) => {
@@ -79,14 +84,14 @@ function Warehouse(props) {
 
   useEffect(() => {
     if (!isEqual(start, [-1, -1, -1]) && !isEqual(end, [-1, -1, -1]))
-      setPath(genPath(start, end, dir));
+      setPath(genPath(start, end, direction));
     if (!isEqual(start, [-1, -1, -1]))
       setIcons((prevIcons) => ({ ...prevIcons, [getId(...start)]: "star" }));
     if (!isEqual(end, [-1, -1, -1]))
       setIcons((prevIcons) => ({ ...prevIcons, [getId(...end)]: "stop circle" }));
-  }, [start, end]);
+  }, [start, end, direction]);
 
-  let grid = genGrid(rows, columns, groups, icons, handleClick);
+  let grid = genGrid(rows, columns, groups, icons, handleClick, toggleDirection);
 
   return (
     <Grid textAlign="center" columns="equal">

@@ -45,16 +45,17 @@ function App() {
               onChange={handleChange}
             />
           </Form.Group>
-          <Form.Button onClick={handleSubmit}>Submit</Form.Button>
+          <Form.Button color="green" inverted onClick={handleSubmit}>
+            Submit
+          </Form.Button>
         </Form>
       </Segment>
       <Segment inverted>
-        {/* <Warehouse
-        rows={submittedDims.rows}
-        cols={submittedDims.cols}
-        groups={submittedDims.groups}
-      /> */}
-        <Warehouse rows={8} cols={4} groups={[1, 2, 1, 2]} />
+        <Warehouse
+          rows={submittedDims.rows}
+          cols={submittedDims.cols}
+          groups={submittedDims.groups}
+        />
       </Segment>
     </div>
   );
