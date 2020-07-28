@@ -9,6 +9,7 @@ function Warehouse(props) {
   const [end, setEnd] = useState([-1, -1, -1]);
   const [path, setPath] = useState([]);
   const [dir, setDir] = useState(1);
+  const [icons, setIcons] = useState({});
 
   const genGrid = () => {
     let rows = [];
@@ -46,48 +47,42 @@ function Warehouse(props) {
     return cols;
   };
 
-  const genGroups = (row, col, size) => {
-    let group = [];
-    for (let k = 1; k <= size; k++)
-      group.push(
-        <Button
-          id={"R" + row + "C" + String.fromCharCode("A".charCodeAt(0) + col - 1) + k}
-          color="grey"
-          onClick={(e) => handleClick(e, row, col, k)}
-          key={k}>
-          <Icon name={getIcon(row, col, k)} />
-        </Button>
-      );
-    return group;
+  const getId = (row, col, k) => {
+    return "R" + row + "C" + String.fromCharCode("A".charCodeAt(0) + col - 1) + k;
   };
 
-  const getIcon = (row, col, k) => {
-    if (isEqual([row, col, k], start)) return "star";
-    else if (isEqual([row, col, k], end)) return "stop circle";
-    else if (inPath([row, col, k])) return "arrows alternate";
-    else return "boxes";
+  const genGroups = (row, col, size) => {
+    let group = [];
+    for (let k = 1; k <= size; k++) {
+      let id = getId(row, col, k);
+      group.push(
+        <Button id={id} color="grey" onClick={(e) => handleClick(e, row, col, k)} key={k}>
+          <Icon name={icons[id] || "boxes"} />
+        </Button>
+      );
+    }
+    return group;
   };
 
   const isEqual = (c1, c2) => {
     return c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2];
   };
 
-  const inPath = (c1) => {
-    for (let i = 0; i < path.length; i++) if (isEqual(path[i], c1)) return true;
-    return false;
-  };
-
   const handleClick = (event, row, col, k) => {
     event.preventDefault();
+    let id = getId(row, col, k);
     setPath([]);
 
     if (isEqual(start, [-1, -1, -1])) {
       setStart([row, col, k]);
+      setIcons((prevIcons) => ({ ...prevIcons, [id]: "star" }));
     } else if (isEqual(end, [-1, -1, -1])) {
       setEnd([row, col, k]);
+      setIcons((prevIcons) => ({ ...prevIcons, [id]: "stop circle" }));
     } else {
       setStart([row, col, k]);
       setEnd([-1, -1, -1]);
+      setIcons({ [id]: "star" });
     }
   };
 
@@ -102,17 +97,30 @@ function Warehouse(props) {
       currR += dir;
       path.push([currR, currC, currK]);
       if (isEqual([currR, currC, currK], end)) return path;
+      let id = getId(currR, currC, currK);
+      setIcons((prevIcons) => ({ ...prevIcons, [id]: dir === 1 ? "angle down" : "angle up" }));
     }
     if (currC === endC) {
-      if (currK < endK) currK++;
-      else currK--;
+      if (currK < endK) {
+        let id = getId(currR, currC, currK);
+        setIcons((prevIcons) => ({ ...prevIcons, [id]: "angle right" }));
+        currK++;
+      } else {
+        let id = getId(currR, currC, currK);
+        setIcons((prevIcons) => ({ ...prevIcons, [id]: "angle left" }));
+        currK--;
+      }
     } else if (currC < endC) {
+      let id = getId(currR, currC, currK);
+      setIcons((prevIcons) => ({ ...prevIcons, [id]: "angle right" }));
       if (currK < groups[currC - 1]) currK++;
       else {
         currC++;
         currK = 1;
       }
     } else {
+      let id = getId(currR, currC, currK);
+      setIcons((prevIcons) => ({ ...prevIcons, [id]: "angle left" }));
       if (currK > 1) currK--;
       else {
         currC--;
@@ -120,8 +128,10 @@ function Warehouse(props) {
       }
     }
 
+    let id = getId(currR, currC, currK);
+    setIcons((prevIcons) => ({ ...prevIcons, [id]: currR === 1 ? "angle down" : "angle up" }));
+
     path.push(...genPath([currR, currC, currK], end, -dir));
-    console.log(path);
     return path;
   };
 
