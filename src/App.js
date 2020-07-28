@@ -3,12 +3,6 @@ import Warehouse from "./components/Warehouse";
 import { Form } from "semantic-ui-react";
 
 function App() {
-  // const [rows, setRows] = useState(0);
-  // const [cols, setCols] = useState(0);
-  // const [groups, setGroups] = useState([]);
-  // const [submittedRows, setSubmittedRows] = useState(0);
-  // const [submittedCols, setSubmittedCols] = useState(0);
-  // const [submittedGroups, setSubmittedGroups] = useState([]);
   const [dims, setDims] = useState({
     rows: 0,
     cols: 0,
