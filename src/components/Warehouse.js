@@ -14,7 +14,6 @@ function Warehouse(props) {
 
   const handleClick = (event, row, col, k) => {
     event.preventDefault();
-    let id = getId(row, col, k);
     setPath([]);
 
     if (isEqual(start, [-1, -1, -1])) {
